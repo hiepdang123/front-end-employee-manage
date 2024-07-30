@@ -30,7 +30,6 @@ const ListEmployeeComponent = () => {
   };
 
   const removeEmployee = (id) => {
-    console.log(id);
     deleteEmployee(id)
       .then(() => {
         getAllEmployee();

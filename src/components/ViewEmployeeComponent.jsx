@@ -22,7 +22,7 @@ const ViewEmployeeComponent = () => {
       });
   };
   const handleForward = () => {
-    navigator("/");
+    navigator("/employees");
   };
   return (
     <div>

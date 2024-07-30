@@ -5,12 +5,12 @@ import {
   updateEmployee,
 } from "../services/EmployeeService";
 import { useNavigate, useParams } from "react-router-dom";
+import { uploadFile } from "../services/FileService";
 
 const EmployeeComponent = () => {
-  const [empNo, setEmpNo] = useState("");
-  const [empName, setEmpName] = useState("");
-  const [position, setPosition] = useState("");
-  const [password, setPassword] = useState("");
+  const [employee, setEmployee] = useState({});
+  const [selectedFile, setSelectedFile] = useState(null);
+
   const [errors, setErrors] = useState({
     empNo: "",
     empName: "",
@@ -20,17 +20,18 @@ const EmployeeComponent = () => {
   const navigator = useNavigate();
   const { id } = useParams();
 
-  const addOrUpdateEmployee = (e) => {
+  // const [message, setMessage] = useState("");
+
+  const handleFileChange = async (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const addOrUpdateEmployee = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      const employee = {
-        empNo,
-        empName,
-        position,
-        password,
-      };
       if (id) {
-        updateEmployee(employee)
+        const response = await uploadFile(selectedFile);
+        updateEmployee({ ...employee, photoUrl: response.data?.data })
           .then((response) => {
             const data = response.data;
             if (data?.success) {
@@ -43,7 +44,6 @@ const EmployeeComponent = () => {
       } else {
         createEmployee(employee)
           .then((response) => {
-            console.log(response.data);
             navigator("/employees");
           })
           .catch((error) => {
@@ -59,9 +59,7 @@ const EmployeeComponent = () => {
         .then((response) => {
           const data = response.data;
           if (data?.success) {
-            setEmpNo(data?.data.empNo);
-            setEmpName(data?.data.empName);
-            setPosition(data?.data.position);
+            setEmployee(data?.data);
             // setPassword(data?.data.password);
           }
         })
@@ -74,21 +72,21 @@ const EmployeeComponent = () => {
   const validateForm = () => {
     let valid = true;
     const errorsCopy = { ...errors };
-    if (empNo.trim()) {
+    if (errorsCopy.empNo.trim()) {
       errorsCopy.empNo = "";
     } else {
       errorsCopy.empNo = "empNo is required";
       valid = false;
     }
 
-    if (empName.trim()) {
+    if (errorsCopy.empName.trim()) {
       errorsCopy.empName = "";
     } else {
       errorsCopy.empName = "EmpName is required";
       valid = false;
     }
 
-    if (position.trim()) {
+    if (errorsCopy.position.trim()) {
       errorsCopy.position = "";
     } else {
       errorsCopy.position = "Position is required";
@@ -142,9 +140,11 @@ const EmployeeComponent = () => {
                   type="text"
                   placeholder="Enter EmpNo"
                   name="empNo"
-                  value={empNo}
+                  value={employee?.empNo}
                   className={`form-control ${errors.empNo ? "is-invalid" : ""}`}
-                  onChange={(e) => setEmpNo(e.target.value)}
+                  onChange={(e) =>
+                    setEmployee((prev) => ({ ...prev, empNo: e.target.value }))
+                  }
                 />
                 {errors.empNo && (
                   <div className="invalid-feedback">{errors.empNo}</div>
@@ -156,11 +156,16 @@ const EmployeeComponent = () => {
                   type="text"
                   placeholder="Enter empName"
                   name="empName"
-                  value={empName}
+                  value={employee?.empName}
                   className={`form-control ${
                     errors.empName ? "is-invalid" : ""
                   }`}
-                  onChange={(e) => setEmpName(e.target.value)}
+                  onChange={(e) =>
+                    setEmployee((prev) => ({
+                      ...prev,
+                      empName: e.target.value,
+                    }))
+                  }
                 />
                 {errors.empName && (
                   <div className="invalid-feedback">{errors.empName}</div>
@@ -172,35 +177,68 @@ const EmployeeComponent = () => {
                   type="text"
                   placeholder="Enter position"
                   name="position"
-                  value={position}
+                  value={employee?.position}
                   className={`form-control ${
                     errors.position ? "is-invalid" : ""
                   }`}
-                  onChange={(e) => setPosition(e.target.value)}
+                  onChange={(e) =>
+                    setEmployee((prev) => ({
+                      ...prev,
+                      position: e.target.value,
+                    }))
+                  }
                 />
                 {errors.position && (
                   <div className="invalid-feedback">{errors.position}</div>
                 )}
               </div>
-              <div className="form-group mb-2">
-                <label className="form-label">Password</label>
-                <input
-                  type="text"
-                  placeholder="Enter password"
-                  name="password"
-                  value={password}
-                  className={`form-control ${
-                    errors.password ? "is-invalid" : ""
-                  }`}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                {errors.password && (
-                  <div className="invalid-feedback">{errors.password}</div>
-                )}
-              </div>
+
               {/* <button className="btn btn-success" onClick={addOrUpdateEmployee}>
                 Add
               </button> */}
+              {id ? (
+                <>
+                  <div className="form-group mb-2">
+                    <div className="form-group">
+                      <label>Avatar</label>
+                      <input
+                        type="file"
+                        className="form-control"
+                        onChange={handleFileChange}
+                      />
+                    </div>
+                    {employee?.photoUrl && (
+                      <img
+                        src={`http://localhost:9000/api/files/${employee?.photoUrl}`}
+                        alt={employee?.empName}
+                        width={150}
+                      />
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="form-group mb-2">
+                  <label className="form-label">Password</label>
+                  <input
+                    type="text"
+                    placeholder="Enter password"
+                    name="password"
+                    value={employee?.password}
+                    className={`form-control ${
+                      errors.password ? "is-invalid" : ""
+                    }`}
+                    onChange={(e) =>
+                      setEmployee((prev) => ({
+                        ...prev,
+                        empName: e.target.value,
+                      }))
+                    }
+                  />
+                  {errors.password && (
+                    <div className="invalid-feedback">{errors.password}</div>
+                  )}
+                </div>
+              )}
               {changeButton()}
               <button
                 className="btn btn-warning ms-2"

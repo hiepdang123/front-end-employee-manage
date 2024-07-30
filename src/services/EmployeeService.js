@@ -21,3 +21,13 @@ export const updateEmployee = (employee) => {
 export const deleteEmployee = (employeeId) => {
   return http.delete(REST_API_BASE_URL + employeeId);
 };
+
+export const uploadImgEmployee = (employeeId, file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return http.post(`${REST_API_BASE_URL}upload/${employeeId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};

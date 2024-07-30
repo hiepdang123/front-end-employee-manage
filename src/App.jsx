@@ -7,6 +7,10 @@ import EmployeeComponent from "./components/EmployeeComponent";
 import ViewEmployeeComponent from "./components/ViewEmployeeComponent";
 import LoginComponent from "./components/LoginComponent";
 import HomeComponent from "./components/HomeComponent";
+import ProductComponent from "./components/ProductComponent";
+import ProductManageComponent from "./components/ProductManageComponent";
+import ViewProductComponent from "./components/ViewProductComponent";
+import ListProductComponent from "./components/ListProductComponent";
 
 function App() {
   return (
@@ -37,6 +41,20 @@ function App() {
           ></Route>
           {/* http://localhost:3000/login */}
           <Route path="/login" element={<LoginComponent />}></Route>
+          <Route path="/product" element={<ProductComponent />}></Route>
+          <Route path="/products" element={<ListProductComponent />}></Route>
+          <Route
+            path="/view-product/:id"
+            element={<ViewProductComponent />}
+          ></Route>
+          <Route
+            path="/add-product"
+            element={<ProductManageComponent />}
+          ></Route>
+          <Route
+            path="/edit-product/:id"
+            element={<ProductManageComponent />}
+          ></Route>
         </Routes>
         {/* <FooterComponent /> */}
       </BrowserRouter>
