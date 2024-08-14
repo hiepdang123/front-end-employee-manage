@@ -8,6 +8,7 @@ function UserCartComponent({
   totalAmountCalculationFunction,
   // eslint-disable-next-line react/prop-types
   setCartCourses,
+  payment,
 }) {
   return (
     <div className={`cart ${cartCourses.length > 0 ? "active" : ""}`}>
@@ -142,6 +143,7 @@ function UserCartComponent({
                 cartCourses.length === 0 ||
                 totalAmountCalculationFunction() === 0
               }
+              onClick={payment}
             >
               Proceed to Payment
             </button>

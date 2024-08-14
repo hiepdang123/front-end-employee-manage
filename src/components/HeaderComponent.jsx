@@ -8,6 +8,7 @@ const HeaderComponent = () => {
   const handleLogout = () => {
     logoutApiCall().then(() => {
       localStorage.removeItem("token");
+      localStorage.removeItem("cart");
       setUser(false);
       navigator("/");
     });

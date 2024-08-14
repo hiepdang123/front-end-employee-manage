@@ -3,6 +3,7 @@ import SearchComponent from "./SearchComponent";
 import ShowCourseComponent from "./ShowCourseComponent";
 import UserCartComponent from "./UserCartComponent";
 import { listProducts, listProductsByIds } from "../services/ProductService";
+import { createOrder } from "../services/OrderService";
 
 const ProductComponent = () => {
   const [courses, setCourses] = useState([
@@ -73,7 +74,7 @@ const ProductComponent = () => {
 
   const addCourseToCartFunction = (GFGcourse) => {
     let cart = [];
-    let arrCart = JSON.parse(localStorage.getItem("cart"));
+    let arrCart = JSON.parse(localStorage.getItem("cart")) || [];
     const alreadyCourses = cartCourses.find((item) => item.id === GFGcourse.id);
     if (alreadyCourses) {
       cart = arrCart.map((item) =>
@@ -114,6 +115,20 @@ const ProductComponent = () => {
     course.name.toLowerCase().includes(searchCourse.toLowerCase())
   );
 
+  const payment = () => {
+    createOrder({ orders: cartCourses })
+      .then((response) => {
+        const { data } = response;
+        if (data?.success) {
+          setCartCourses([]);
+          localStorage.removeItem("cart");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return (
     <div className="App">
       <SearchComponent
@@ -132,6 +147,7 @@ const ProductComponent = () => {
           deleteCourseFromCartFunction={deleteCourseFromCartFunction}
           totalAmountCalculationFunction={totalAmountCalculationFunction}
           setCartCourses={setCartCourses}
+          payment={payment}
         />
       </main>
     </div>

@@ -72,21 +72,21 @@ const EmployeeComponent = () => {
   const validateForm = () => {
     let valid = true;
     const errorsCopy = { ...errors };
-    if (errorsCopy.empNo.trim()) {
+    if (employee.empNo.trim()) {
       errorsCopy.empNo = "";
     } else {
       errorsCopy.empNo = "empNo is required";
       valid = false;
     }
 
-    if (errorsCopy.empName.trim()) {
+    if (employee.empName.trim()) {
       errorsCopy.empName = "";
     } else {
       errorsCopy.empName = "EmpName is required";
       valid = false;
     }
 
-    if (errorsCopy.position.trim()) {
+    if (employee.position.trim()) {
       errorsCopy.position = "";
     } else {
       errorsCopy.position = "Position is required";
@@ -230,7 +230,7 @@ const EmployeeComponent = () => {
                     onChange={(e) =>
                       setEmployee((prev) => ({
                         ...prev,
-                        empName: e.target.value,
+                        password: e.target.value,
                       }))
                     }
                   />
